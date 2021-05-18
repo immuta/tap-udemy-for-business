@@ -6,12 +6,14 @@ from singer_sdk import Tap, Stream
 from singer_sdk import typing as th  # JSON schema typing helpers
 
 from tap_udemy_for_business.streams import (
+    CoursesStream,
     UserActivityStream,
     UserCourseActivityStream,
     UserProgressStream
 )
 
 STREAM_TYPES = [
+    CoursesStream,
     UserActivityStream,
     UserCourseActivityStream,
     UserProgressStream
