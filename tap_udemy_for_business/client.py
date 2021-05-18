@@ -1,11 +1,11 @@
 """REST client handling, including UdemyForBusinessStream base class."""
 
+import base64
 import requests
+
 from pathlib import Path
 from typing import Any, Dict, Optional, Union, List, Iterable
-
 from singer_sdk.streams import RESTStream
-from tap_udemy_for_business.auth import UdemyForBusinessAuthenticator
 
 
 SCHEMAS_DIR = Path(__file__).parent / Path("./schemas")
@@ -13,7 +13,6 @@ SCHEMAS_DIR = Path(__file__).parent / Path("./schemas")
 
 class UdemyForBusinessStream(RESTStream):
     """UdemyForBusiness stream class."""
-
 
     @property
     def url_base(self) -> str:
@@ -24,18 +23,17 @@ class UdemyForBusinessStream(RESTStream):
         )
 
     @property
-    def authenticator(self) -> UdemyForBusinessAuthenticator:
-        """Return a new authenticator object."""
-        return UdemyForBusinessAuthenticator.create_for_stream(self)
-
-    @property
     def http_headers(self) -> dict:
         """Return the http headers needed."""
         headers = {}
         if "user_agent" in self.config:
             headers["User-Agent"] = self.config.get("user_agent")
-        # If not using an authenticator, you may also provide inline auth headers:
-        # headers["Private-Token"] = self.config.get("auth_token")
+
+        # Authentication
+        raw_credentials = f"{self.config['client_id']}:{self.config['client_secret']}"
+        auth_token = base64.b64encode(raw_credentials.encode()).decode('ascii')
+        headers["Authorization"] = f"Basic {auth_token}"
+
         return headers
 
     def get_next_page_token(
@@ -49,6 +47,14 @@ class UdemyForBusinessStream(RESTStream):
         if next_page_token:
             self.logger.info(f"Next page token retrieved: {next_page_token}")
         return next_page_token
+
+
+    # {
+    # "count": 19573,
+    # "next": "https://immuta.udemy.com/api-2.0/organizations/116724/analytics/user-progress/?page=2",
+    # "previous": null,
+    # "results": [
+
 
     def get_url_params(
         self, partition: Optional[dict], next_page_token: Optional[Any] = None

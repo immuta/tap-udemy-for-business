@@ -7,43 +7,11 @@ from singer_sdk import typing as th  # JSON Schema typing helpers
 
 from tap_udemy_for_business.client import UdemyForBusinessStream
 
-# TODO: Delete this is if not using json files for schema definition
-SCHEMAS_DIR = Path(__file__).parent / Path("./schemas")
+
 # TODO: - Override `UsersStream` and `GroupsStream` with your own stream definition.
 #       - Copy-paste as many times as needed to create multiple stream types.
 
 
-class UsersStream(UdemyForBusinessStream):
-    """Define custom stream."""
-    name = "users"
-    path = "/users"
-    primary_keys = ["id"]
-    replication_key = None
-    # Optionally, you may also use `schema_filepath` in place of `schema`:
-    # schema_filepath = SCHEMAS_DIR / "users.json"
-    schema = th.PropertiesList(
-        th.Property("name", th.StringType),
-        th.Property("id", th.StringType),
-        th.Property("age", th.IntegerType),
-        th.Property("email", th.StringType),
-        th.Property("street", th.StringType),
-        th.Property("city", th.StringType),
-        th.Property("state", th.StringType),
-        th.Property("zip", th.StringType),
-    ).to_dict()
-
-
-class GroupsStream(UdemyForBusinessStream):
-    """Define custom stream."""
-    name = "groups"
-    path = "/groups"
-    primary_keys = ["id"]
-    replication_key = "modified"
-    schema = th.PropertiesList(
-        th.Property("name", th.StringType),
-        th.Property("id", th.StringType),
-        th.Property("modified", th.DateTimeType),
-    ).to_dict()
 
 
 # class CoursesStream(UdemyForBusinessStream):
@@ -145,6 +113,7 @@ class GroupsStream(UdemyForBusinessStream):
 class UserActivityStream(UdemyForBusinessStream):
     name = "user_activity"
     path = "/analytics/user-activity"
+    replication_key = "last_date_visit"
 
     schema = th.PropertiesList(
         th.Property("user_name", th.StringType),
@@ -163,12 +132,13 @@ class UserActivityStream(UdemyForBusinessStream):
         th.Property("num_video_consumed_minutes", th.NumberType),
         th.Property("num_web_visited_days", th.IntegerType),
         th.Property("last_date_visit", th.DateTimeType),
-    )
+    ).to_dict()
 
 class UserCourseActivityStream(UdemyForBusinessStream):
     name = "user_course_activity"
     path = "/analytics/user-course-activity"
     primary_keys = ["user_email", "course_id"]
+    replication_key = "course_last_accessed_date"
 
     schema = th.PropertiesList(
         th.Property("user_name", th.StringType),
@@ -197,6 +167,8 @@ class UserCourseActivityStream(UdemyForBusinessStream):
 class UserProgressStream(UdemyForBusinessStream):
     name = "user_progress"
     path = "/analytics/user-progress"
+    primary_keys = ["id"]
+    replication_key = None
 
     schema = th.PropertiesList(
         th.Property("_class", th.StringType),
@@ -212,16 +184,10 @@ class UserProgressStream(UdemyForBusinessStream):
         th.Property("item_type", th.StringType),
         th.Property("item_id", th.IntegerType),
         th.Property("item_start_time", th.DateTimeType),
-        th.Property("item_completion_time", th.NumberType),
+        th.Property("item_completion_time", th.DateTimeType),
         th.Property("item_views", th.NumberType),
         th.Property("item_completion_ratio", th.NumberType),
         th.Property("item_final_result", th.StringType),
         th.Property("item_marked_complete", th.BooleanType),
         th.Property("course_category", th.StringType)       
     ).to_dict()
-
-    {
-    "count": 19573,
-    "next": "https://immuta.udemy.com/api-2.0/organizations/116724/analytics/user-progress/?page=2",
-    "previous": null,
-    "results": [
