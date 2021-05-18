@@ -9,19 +9,20 @@ from tap_udemy_for_business.streams import (
     CoursesStream,
     UserActivityStream,
     UserCourseActivityStream,
-    UserProgressStream
+    UserProgressStream,
 )
 
 STREAM_TYPES = [
     CoursesStream,
     UserActivityStream,
     UserCourseActivityStream,
-    UserProgressStream
+    UserProgressStream,
 ]
 
 
 class TapUdemyForBusiness(Tap):
     """UdemyForBusiness tap class."""
+
     name = "tap-udemy-for-business"
 
     config_jsonschema = th.PropertiesList(

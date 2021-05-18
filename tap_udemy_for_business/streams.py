@@ -70,6 +70,34 @@ class CoursesStream(UdemyForBusinessStream):
         )) # Promotional Video Url, the url of the promotional video	
     ).to_dict()
 
+    def get_url_params(
+        self, partition: Optional[dict], next_page_token: Optional[Any] = None
+    ) -> Dict[str, Any]:
+        params = {
+            "page_size": self._page_size,
+            "fields[course]": ",".join([
+                "_class",
+                "id",
+                "title",
+                "description",
+                "url",
+                "estimated_content_length",
+                "num_lectures",
+                "num_videos",
+                "mobile_native_deeplink",
+                "is_practice_test_course",
+                "num_quizzes",
+                "num_practice_tests",
+                "has_closed_caption",
+                "estimated_content_length_video",
+                "last_update_date",
+            ])
+        }
+        if next_page_token:
+            params["page"] = next_page_token
+
+        return params
+
 
 class UserActivityStream(UdemyForBusinessStream):
     name = "user_activity"
