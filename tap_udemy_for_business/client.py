@@ -2,6 +2,7 @@
 
 import base64
 import requests
+import re
 
 from pathlib import Path
 from typing import Any, Dict, Optional, Union, List, Iterable
@@ -40,27 +41,28 @@ class UdemyForBusinessStream(RESTStream):
         self, response: requests.Response, previous_token: Optional[Any] = None
     ) -> Optional[Any]:
         """Return a token for identifying next page or None if no more pages."""
-        # TODO: If pagination is required, return a token which can be used to get the
-        #       next page. If this is the final page, return "None" to end the
-        #       pagination loop.
-        next_page_token = response.headers.get("X-Next-Page", None)
-        if next_page_token:
-            self.logger.info(f"Next page token retrieved: {next_page_token}")
-        return next_page_token
 
-
-    # {
-    # "count": 19573,
-    # "next": "https://immuta.udemy.com/api-2.0/organizations/116724/analytics/user-progress/?page=2",
-    # "previous": null,
-    # "results": [
+        try:
+            next_page_url = response.json()["next"]
+            self.logger.info(next_page_url)
+            match = re.search('page=([0-9]+)', next_page_url)
+            if match:
+                next_page_token =  int(match.group(1))
+                self.logger.info(f"Next page token retrieved: {next_page_token}")
+                return next_page_token
+        except KeyError:
+            return None
+        except TypeError:
+            return None
 
 
     def get_url_params(
         self, partition: Optional[dict], next_page_token: Optional[Any] = None
     ) -> Dict[str, Any]:
         """Return a dictionary of values to be used in URL parameterization."""
-        params: dict = {}
+        params = {
+            "page_size": 1000,
+        }
         if next_page_token:
             params["page"] = next_page_token
         if self.replication_key:
@@ -68,19 +70,11 @@ class UdemyForBusinessStream(RESTStream):
             params["order_by"] = self.replication_key
         return params
 
-    def prepare_request_payload(
-        self, partition: Optional[dict], next_page_token: Optional[Any] = None
-    ) -> Optional[dict]:
-        """Prepare the data payload for the REST API request.
-
-        By default, no payload will be sent (return None).
-        """
-        # TODO: Delete this method if no payload is required. (Most REST APIs.)
-        return None
 
     def parse_response(self, response: requests.Response) -> Iterable[dict]:
         """Parse the response and return an iterator of result rows."""
         resp_json = response.json()
         for row in resp_json.get("results"):
-            yield row
+            if row.get("user_email") != "Anonymized User":
+                yield row
 

@@ -27,6 +27,7 @@ class TapUdemyForBusiness(Tap):
         th.Property("client_secret", th.StringType, required=True),
         th.Property("organization_id", th.IntegerType, required=True),
         th.Property("organization_name", th.StringType, required=True),
+        th.Property("start_date", th.DateTimeType),
     ).to_dict()
 
     def discover_streams(self) -> List[Stream]:
