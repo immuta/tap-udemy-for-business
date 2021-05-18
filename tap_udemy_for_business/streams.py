@@ -12,7 +12,8 @@ class CoursesStream(UdemyForBusinessStream):
     name = "courses"
     path = "/courses/list"
     primary_keys = ["id"]
-    replication_key = "last_update_date"
+    # replication_key = "last_update_date"
+    _page_size = 100
 
     schema =  th.PropertiesList(
         th.Property("_class", th.StringType),
@@ -155,12 +156,10 @@ class UserProgressStream(UdemyForBusinessStream):
         self, partition: Optional[dict], next_page_token: Optional[Any] = None
     ) -> Dict[str, Any]:
         params = {
-            "page_size": 1000,
+            "page_size": self._page_size,
             "from_date": self.config.get("start_date")
         }
         if next_page_token:
             params["page"] = next_page_token
-        if self.replication_key:
-            params["sort"] = "asc"
-            params["order_by"] = self.replication_key
+
         return params

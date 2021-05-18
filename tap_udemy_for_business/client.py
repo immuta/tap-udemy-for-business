@@ -15,6 +15,8 @@ SCHEMAS_DIR = Path(__file__).parent / Path("./schemas")
 class UdemyForBusinessStream(RESTStream):
     """UdemyForBusiness stream class."""
 
+    _page_size = 1000
+
     @property
     def url_base(self) -> str:
         """Return the API URL root, configurable via tap settings."""
@@ -61,13 +63,13 @@ class UdemyForBusinessStream(RESTStream):
     ) -> Dict[str, Any]:
         """Return a dictionary of values to be used in URL parameterization."""
         params = {
-            "page_size": 1000,
+            "page_size": self._page_size,
         }
         if next_page_token:
             params["page"] = next_page_token
-        if self.replication_key:
-            params["sort"] = "asc"
-            params["order_by"] = self.replication_key
+        # if self.replication_key:
+            # params["sort"] = "asc"
+            # params["order_by"] = self.replication_key
         return params
 
 
