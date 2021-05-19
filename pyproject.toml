@@ -1,9 +1,9 @@
 [tool.poetry]
 name = "tap-udemy-for-business"
-version = "0.0.1"
-description = "`tap-udemy-for-business` is Singer tap for UdemyForBusiness, built with the Singer SDK."
+version = "0.1.0"
+description = "`tap-udemy-for-business` is Singer tap for Udemy For Business, built with the Singer SDK."
 authors = ["Stephen Bailey"]
-license = "Apache 2.0"
+license = "MIT"
 
 [tool.poetry.dependencies]
 python = "<3.9,>=3.6"
