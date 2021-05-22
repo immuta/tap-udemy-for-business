@@ -175,7 +175,7 @@ class UserProgressStream(UdemyForBusinessStream):
         th.Property("item_completion_time", th.DateTimeType),
         th.Property("item_views", th.NumberType),
         th.Property("item_completion_ratio", th.NumberType),
-        th.Property("item_final_result", th.StringType),
+        th.Property("item_final_result", th.NumberType),
         th.Property("item_marked_complete", th.BooleanType),
         th.Property("course_category", th.StringType)       
     ).to_dict()
