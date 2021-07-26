@@ -154,10 +154,11 @@ class UserCourseActivityStream(UdemyForBusinessStream):
 class UserProgressStream(UdemyForBusinessStream):
     name = "user_progress"
     path = "/analytics/user-progress"
-    primary_keys = ["id"]
+    primary_keys = ["user_email", "course_id", "item_id"]
     schema = th.PropertiesList(
         th.Property("_class", th.StringType),
         th.Property("id", th.IntegerType),
+        th.Property("user_external_id", th.StringType),
         th.Property("user_email", th.StringType),
         th.Property("course_id", th.IntegerType),
         th.Property("course_title", th.StringType),
