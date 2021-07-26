@@ -6,9 +6,9 @@ authors = ["Stephen Bailey"]
 license = "MIT"
 
 [tool.poetry.dependencies]
-python = "<3.9,>=3.6"
+python = "<3.9,>=3.6.2"
 requests = "^2.25.1"
-singer-sdk = "^0.1.6"
+singer-sdk = ">=0.1.6"
 
 [tool.poetry.dev-dependencies]
 pytest = "^6.1.2"

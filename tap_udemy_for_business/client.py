@@ -21,7 +21,8 @@ class UdemyForBusinessStream(RESTStream):
     def url_base(self) -> str:
         """Return the API URL root, configurable via tap settings."""
         return "https://{}.udemy.com/api-2.0/organizations/{}".format(
-            self.config["organization_name"], self.config["organization_id"]
+            self.config["organization_name"],
+            self.config["organization_id"]
         )
 
     @property
