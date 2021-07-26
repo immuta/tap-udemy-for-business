@@ -1,18 +1,16 @@
 """Stream type classes for tap-udemy-for-business."""
 
-from pathlib import Path
+from dateutil import parser
 from typing import Any, Dict, Optional, Union, List, Iterable
 
-from singer_sdk import typing as th  # JSON Schema typing helpers
+from singer_sdk import typing as th
 from tap_udemy_for_business.client import UdemyForBusinessStream
 
-# from_date = "2021-03-24" will filter
 
 class CoursesStream(UdemyForBusinessStream):
     name = "courses"
     path = "/courses/list"
     primary_keys = ["id"]
-    # replication_key = "last_update_date"
     _page_size = 100
 
     schema =  th.PropertiesList(
@@ -70,9 +68,8 @@ class CoursesStream(UdemyForBusinessStream):
         )) # Promotional Video Url, the url of the promotional video	
     ).to_dict()
 
-    def get_url_params(
-        self, partition: Optional[dict], next_page_token: Optional[Any] = None
-    ) -> Dict[str, Any]:
+    def get_url_params(self, partition, next_page_token) -> Dict:
+        "Overwrite SDK method to request specific fields from the endpoint."
         params = {
             "page_size": self._page_size,
             "fields[course]": ",".join([
@@ -180,12 +177,12 @@ class UserProgressStream(UdemyForBusinessStream):
         th.Property("course_category", th.StringType)       
     ).to_dict()
 
-    def get_url_params(
-        self, partition: Optional[dict], next_page_token: Optional[Any] = None
-    ) -> Dict[str, Any]:
+    def get_url_params(self, partition, next_page_token) -> Dict:
+        "Overwrite SDK method to allow `from_date` to be passed in."
+        start_date = parser.parse(self.config.get("start_date")).strftime("%Y-%m-%d")
         params = {
             "page_size": self._page_size,
-            "from_date": self.config.get("start_date")
+            "from_date": start_date
         }
         if next_page_token:
             params["page"] = next_page_token
