@@ -1,0 +1,22 @@
+version: 1
+project_id: tap-udemy-for-business
+plugins:
+  extractors:
+  - name: tap-learndash
+    namespace: tap_learndash
+    executable: tap-learndash
+    capabilities:
+    - state
+    - catalog
+    - discover
+    settings:
+    - name: client_id
+    - name: client_secret
+      kind: password
+    - name: organization_id
+    - name: organization_name
+    - name: start_date
+      kind: date_iso8601
+    config:
+    - name: start_date
+      value: "2021-01-01T00:00:00Z"
