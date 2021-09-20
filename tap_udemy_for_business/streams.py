@@ -100,7 +100,6 @@ class UserActivityStream(UdemyForBusinessStream):
     name = "user_activity"
     path = "/analytics/user-activity"
     primary_keys = ["user_email"]
-    replication_key = "last_date_visit"
 
     schema = th.PropertiesList(
         th.Property("user_name", th.StringType),
