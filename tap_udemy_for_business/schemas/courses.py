@@ -6,6 +6,7 @@ schema = th.PropertiesList(
     th.Property(
         "id",
         th.IntegerType,
+        required=True,
         description="Course Id, this is a unique identifier for the course",
     ),
     th.Property(

@@ -2,9 +2,9 @@ from singer_sdk import typing as th
 
 
 th.PropertiesList(
+    th.Property("user_email", th.StringType, required=True),
     th.Property("user_name", th.StringType),
     th.Property("user_surname", th.StringType),
-    th.Property("user_email", th.StringType),
     th.Property("user_role", th.StringType),
     th.Property("user_joined_date", th.DateTimeType),
     th.Property("user_external_id", th.StringType),
