@@ -1,7 +1,7 @@
 from singer_sdk import typing as th
 
 
-th.PropertiesList(
+schema = th.PropertiesList(
     th.Property("course_id", th.IntegerType, required=True),
     th.Property("user_email", th.StringType, required=True),
     th.Property("user_name", th.StringType),

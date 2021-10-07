@@ -91,7 +91,6 @@ schema = th.PropertiesList(
         th.ObjectType(
             th.Property("_class", th.StringType),
             th.Property("locale", th.StringType),
-            th.Property(),
         ),
         description="Indicates the language of the course (e.g. es_ES)",
     ),

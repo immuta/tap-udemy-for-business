@@ -16,28 +16,26 @@ class CoursesStream(UdemyForBusinessStream):
 
     def get_url_params(self, partition, next_page_token) -> Dict:
         "Overwrite SDK method to request specific fields from the endpoint."
-        params = super().get_url_params(partition, next_page_token=next_page_token)
-        params = {
-            "fields[course]": ",".join(
-                [
-                    "_class",
-                    "id",
-                    "title",
-                    "description",
-                    "url",
-                    "estimated_content_length",
-                    "num_lectures",
-                    "num_videos",
-                    "mobile_native_deeplink",
-                    "is_practice_test_course",
-                    "num_quizzes",
-                    "num_practice_tests",
-                    "has_closed_caption",
-                    "estimated_content_length_video",
-                    "last_update_date",
-                ]
-            ),
-        }
+        params = super().get_url_params(partition, next_page_token)
+        params["fields[course]"] = ",".join(
+            [
+                "_class",
+                "id",
+                "title",
+                "description",
+                "url",
+                "estimated_content_length",
+                "num_lectures",
+                "num_videos",
+                "mobile_native_deeplink",
+                "is_practice_test_course",
+                "num_quizzes",
+                "num_practice_tests",
+                "has_closed_caption",
+                "estimated_content_length_video",
+                "last_update_date",
+            ]
+        )
         return params
 
 
@@ -66,5 +64,5 @@ class UserProgressStream(UdemyForBusinessStream):
     ) -> Dict[str, Any]:
         "Overwrite SDK method to allow `from_date` to be passed in."
         params = super().get_url_params(partition, next_page_token=next_page_token)
-        params["from_date"] = self.get_starting_timestamp().strftime("%Y-%m-%d")
+        params["from_date"] = self.get_starting_timestamp(context=partition).strftime("%Y-%m-%d")
         return params

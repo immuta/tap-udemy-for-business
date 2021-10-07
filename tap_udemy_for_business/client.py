@@ -22,7 +22,6 @@ class UdemyForBusinessStream(RESTStream):
 
     @property
     def url_base(self) -> str:
-        """Return the API URL root, configurable via tap settings."""
         return "https://{}.udemy.com/api-2.0/organizations/{}".format(
             self.config["organization_name"], self.config["organization_id"]
         )
@@ -41,11 +40,6 @@ class UdemyForBusinessStream(RESTStream):
         headers = {}
         if "user_agent" in self.config:
             headers["User-Agent"] = self.config.get("user_agent")
-
-        raw_credentials = f"{self.config['client_id']}:{self.config['client_secret']}"
-        auth_token = base64.b64encode(raw_credentials.encode()).decode("ascii")
-        headers["Authorization"] = f"Basic {auth_token}"
-
         return headers
 
     def get_next_page_token(
@@ -55,11 +49,9 @@ class UdemyForBusinessStream(RESTStream):
 
         try:
             next_page_url = response.json()["next"]
-            self.logger.info(next_page_url)
             match = re.search("page=([0-9]+)", next_page_url)
             if match:
                 next_page_token = int(match.group(1))
-                self.logger.info(f"Next page token retrieved: {next_page_token}")
                 return next_page_token
         except KeyError:
             return None
