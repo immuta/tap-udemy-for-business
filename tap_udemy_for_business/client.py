@@ -34,14 +34,6 @@ class UdemyForBusinessStream(RESTStream):
             password=self.config["client_secret"],
         )
 
-    @property
-    def authenticator(self):
-        return BasicAuthenticator.create_for_stream(
-            self,
-            username=self.config["client_id"],
-            password=self.config["client_secret"],
-        )
-
     def get_next_page_token(
         self, response: requests.Response, previous_token: Optional[Any] = None
     ) -> Optional[Any]:
