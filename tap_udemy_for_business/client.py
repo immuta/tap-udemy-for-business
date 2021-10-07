@@ -7,6 +7,7 @@ import re
 from pathlib import Path
 from typing import Any, Dict, Optional, Union, List, Iterable
 from singer_sdk.streams import RESTStream
+from singer_sdk.authenticators import BasicAuthenticator
 
 
 SCHEMAS_DIR = Path(__file__).parent / Path("./schemas")
@@ -26,13 +27,18 @@ class UdemyForBusinessStream(RESTStream):
         )
 
     @property
+    def authenticator(self):
+        return BasicAuthenticator.create_for_stream(
+            self, username=self.config["client_id"], password=self.config["client_secret"]
+        )
+
+    @property
     def http_headers(self) -> dict:
         """Return the http headers needed."""
         headers = {}
         if "user_agent" in self.config:
             headers["User-Agent"] = self.config.get("user_agent")
 
-        # Authentication
         raw_credentials = f"{self.config['client_id']}:{self.config['client_secret']}"
         auth_token = base64.b64encode(raw_credentials.encode()).decode("ascii")
         headers["Authorization"] = f"Basic {auth_token}"
@@ -66,9 +72,6 @@ class UdemyForBusinessStream(RESTStream):
         }
         if next_page_token:
             params["page"] = next_page_token
-        # if self.replication_key:
-        # params["sort"] = "asc"
-        # params["order_by"] = self.replication_key
         return params
 
     def parse_response(self, response: requests.Response) -> Iterable[dict]:
