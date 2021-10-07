@@ -70,9 +70,7 @@ class UdemyForBusinessStream(RESTStream):
         self, partition: Optional[dict], next_page_token: Optional[Any] = None
     ) -> Dict[str, Any]:
         """Return a dictionary of values to be used in URL parameterization."""
-        params = {
-            "page_size": self._page_size,
-        }
+        params = {"page_size": self._page_size}
         if next_page_token:
             params["page"] = next_page_token
         return params
