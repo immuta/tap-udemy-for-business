@@ -34,14 +34,6 @@ class UdemyForBusinessStream(RESTStream):
             password=self.config["client_secret"],
         )
 
-    @property
-    def http_headers(self) -> dict:
-        """Return the http headers needed."""
-        headers = {}
-        if "user_agent" in self.config:
-            headers["User-Agent"] = self.config.get("user_agent")
-        return headers
-
     def get_next_page_token(
         self, response: requests.Response, previous_token: Optional[Any] = None
     ) -> Optional[Any]:
@@ -67,11 +59,9 @@ class UdemyForBusinessStream(RESTStream):
             params["page"] = next_page_token
         return params
 
-    def parse_response(self, response: requests.Response) -> Iterable[dict]:
-        """Parse the response and return an iterator of result rows."""
-        yield from [
-            row
-            for row in extract_jsonpath(self.records_jsonpath, input=response.json())
-            if row.get("user_email") != "Anonymized User"
-            and all(row.get(k) is not None for k in self.primary_keys)
-        ]
+    def post_process(self, row: dict, context: Optional[dict] = None) -> dict:
+        if row.get("user_email") != "Anonymized User":
+            return None
+        if any(row.get(k) == None for k in self.primary_keys):
+            return None
+        return row
