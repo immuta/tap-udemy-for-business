@@ -1,6 +1,10 @@
 # tap-udemy-for-business
 
-`tap-udemy-for-business` is a Singer tap for Udemy For Business.
+`tap-udemy-for-business` is a Singer tap for Udemy For Business. API documentation can be found
+on the [Udemy website](https://business-support.udemy.com/hc/en-us/articles/360005792753-Udemy-Business-API-Reference).
+This tap uses the "course sync and daily reporting API". One caveat to be aware of
+is that the daily reporting API is not continuously updated, but is instead updated once a day,
+so high-frequency syncs are generally not necessary.
 
 Built with the [Singer SDK](https://gitlab.com/meltano/singer-sdk).
 
