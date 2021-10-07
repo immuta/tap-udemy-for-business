@@ -8,6 +8,7 @@ from pathlib import Path
 from typing import Any, Dict, Optional, Union, List, Iterable
 from singer_sdk.streams import RESTStream
 from singer_sdk.authenticators import BasicAuthenticator
+from singer_sdk.helpers.jsonpath import extract_jsonpath
 
 
 SCHEMAS_DIR = Path(__file__).parent / Path("./schemas")
@@ -17,19 +18,21 @@ class UdemyForBusinessStream(RESTStream):
     """UdemyForBusiness stream class."""
 
     _page_size = 1000
+    records_jsonpath = "$.results[*]"
 
     @property
     def url_base(self) -> str:
         """Return the API URL root, configurable via tap settings."""
         return "https://{}.udemy.com/api-2.0/organizations/{}".format(
-            self.config["organization_name"],
-            self.config["organization_id"]
+            self.config["organization_name"], self.config["organization_id"]
         )
 
     @property
     def authenticator(self):
         return BasicAuthenticator.create_for_stream(
-            self, username=self.config["client_id"], password=self.config["client_secret"]
+            self,
+            username=self.config["client_id"],
+            password=self.config["client_secret"],
         )
 
     @property
@@ -76,7 +79,9 @@ class UdemyForBusinessStream(RESTStream):
 
     def parse_response(self, response: requests.Response) -> Iterable[dict]:
         """Parse the response and return an iterator of result rows."""
-        resp_json = response.json()
-        for row in resp_json.get("results"):
-            if row.get("user_email") != "Anonymized User":
-                yield row
+        yield from [
+            row
+            for row in extract_jsonpath(self.records_jsonpath, input=response.json())
+            if row.get("user_email") != "Anonymized User"
+            and all(row.get(k) is not None for k in self.primary_keys)
+        ]
