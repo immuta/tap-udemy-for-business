@@ -1,6 +1,5 @@
 """REST client handling, including UdemyForBusinessStream base class."""
 
-import base64
 import requests
 import re
 
