@@ -64,5 +64,7 @@ class UserProgressStream(UdemyForBusinessStream):
     ) -> Dict[str, Any]:
         "Overwrite SDK method to allow `from_date` to be passed in."
         params = super().get_url_params(partition, next_page_token=next_page_token)
-        params["from_date"] = self.get_starting_timestamp(context=partition).strftime("%Y-%m-%d")
+        start_date = self.get_starting_timestamp(context=partition)
+        if start_date:
+            params["from_date"] = start_date.strftime("%Y-%m-%d")
         return params
